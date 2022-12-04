@@ -1,20 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=
-    , initial-scale=1.0">
-    <title>Imgur.com</title>
-    <link rel="stylesheet" href="index.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMGUR CLONE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./css/index.css" type="text/css" />
 </head>
+
 <body>
-     <nav class="topNavbar">
-        <div>
-            <img src="https://imgur.com/" alt="">
+    <!-- NAvbar -->
+    <div class="topnav">
+        <a class="active" href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <div class="search-container">
+            <form action="/action_page.php">
+                <input type="text" placeholder="Search.." name="search">
+                <button><i class="fa fa-search"></i></button>
+            </form>
         </div>
-     </nav>
-    
+    </div>
+    <div id="container">
+        <div id="boxes">
+           
+        </div>
+    </div>
+
+    <script>
+        const addItems = async () => {
+                var res = await fetch(`https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json?api-key=GDAa8Q5zaHgOlIfQW4PYAUgGV5yfQZs6`)
+                var data = await res.json();
+                console.log(data);
+                for(let i=0; i<data.results.books.length; i++){
+                    createCards(data.results.books[i]);
+                }
+        }
+        
+        function createCards(data) {
+            const container = document.getElementById("boxes")
+            const div = document.createElement("div");
+            const img = document.createElement("img");
+            const p = document.createElement("p");
+            img.src=data.book_image;
+            img.style.width="100%";
+            p.textContent=data.description;
+            div.append(img,p);
+            div.className="card";
+            container.append(div);
+        }
+        const debouncer = (fn, delay) => {
+            let id;
+            return () => {
+                id && clearTimeout(id);
+                id = setTimeout(() => fn(), delay);
+            }
+        }
+
+        window.addEventListener("load", () => {
+            const div = document.getElementById("container");
+            const fn = () => {
+                 addItems();
+            }
+            const debounceCallback = debouncer(() => fn(), 100);
+            div.addEventListener("scroll", debounceCallback);
+            addItems();
+        })
+    </script>
 </body>
 </html>
- <script src="index.js"></script>
